@@ -10,23 +10,39 @@ def readData(data):
         if row[0] == 'Type':
             #First row should just be Type, Time, Value, Data center
             continue
-        else:
+        elif row[0] == 'rtb.requests':
             dataType = row[3][-1]
             if dataType not in dataCenters:
                 dataCenters[dataType] = []
-            dataCenters[dataType].append([row[1], row[2]])
-
+            dataCenters[dataType].append([int(row[1]), float(row[2])])
+        else:
+            #for other request types?
+            continue
     return dataCenters
 
-def drawGraph(dataCenters):
-    #Plots up to 7 data centers
+#Organizes, manipulates, or removes data
+def handleData(dataCenters):
+    data = {}
+    for dataType in dataCenters:
+        dataCenter = dataCenters[dataType]
+
+        xValues = []
+        yValues = []
+        for time, value in dataCenter:
+            xValues.append(time)
+            yValues.append(value)
+    
+        data[dataType] = [xValues, yValues]
+    return data
+
+def drawSimpleGraph(dataCenters, graphName):
     lineColors = ['k', 'y', 'm', 'c', 'r', 'g', 'b']
     assignedColors = {}
     plt.xlabel('Time')
     plt.ylabel('Value')
     plt.grid(True)
     for dataType in dataCenters:
-        dataCenter = dataCenters[dataType]
+        xValues, yValues = dataCenters[dataType]
         color = 'k' #default color
         if dataType in assignedColors:
             color = assignedColors[dataType]
@@ -34,15 +50,26 @@ def drawGraph(dataCenters):
             color = lineColors.pop()
             assignedColors[dataType] = color
 
-        xValues = []
-        yValues = []
-        for dataPair in dataCenter:
-            time = dataPair[0]
-            value = dataPair[1]
-            xValues.append(time)
-            yValues.append(value)
-            #date = datetime.fromtimestamp(time).strftime('%c')
         plt.plot(xValues, yValues, color)
         
-    plt.savefig("simpleGraph.png")
+    plt.savefig(graphName)
     plt.show()
+
+#Assume rtb = real time bids so value is money so it cannot be negative
+#Also the negatives values heavily skewed the simple graph making it unreadable
+def handleDataNoNegatives(dataCenters):
+    data = {}
+    for dataType in dataCenters:
+        dataCenter = dataCenters[dataType]
+
+        xValues = []
+        yValues = []
+        for time, value in dataCenter:
+            if value < 0:
+                continue
+            else:
+                xValues.append(time)
+                yValues.append(value)
+    
+        data[dataType] = [xValues, yValues]
+    return data
