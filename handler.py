@@ -1,5 +1,6 @@
 from datetime import datetime
 
+"""Standard read file row by row."""
 def readData(data):
     dataCenters = {}
     
@@ -19,7 +20,7 @@ def readData(data):
             continue
     return dataCenters  
 
-#Organizes a simple data structure of given data
+"""Organizes a simple data structure of given data"""
 def handleData(data):
     result = {}
     for dataType in data:
@@ -34,8 +35,8 @@ def handleData(data):
         data[dataType] = [xValues, yValues]
     return result
 
-#Assume rtb = real time bids so value is money so it cannot be negative
-#Also the negatives values heavily skewed the simple graph making it unreadable
+"""Assume rtb = real time bids so value is money so it cannot be negative.
+Also the negatives values heavily skewed the simple graph making it unreadable"""
 def rmNegatives(data):
     result = {}
     for dataType in data:
@@ -53,7 +54,7 @@ def rmNegatives(data):
         result[dataType] = [xValues, yValues]
     return result
 
-#Similar as above except but negatives in its own data set
+"""Similar as rmNegatives but make negatives its own data set"""
 def setAsideNegatives(data):
     result = {}
     negatives = []
@@ -87,6 +88,7 @@ def gatherNegatives(data):
     
     return result
 
+"""Organizes data by timestamp rather than data center"""
 def organizeByTimeStamp(data):
     result = {}
     for dataType in data:
@@ -95,4 +97,7 @@ def organizeByTimeStamp(data):
             if time not in result:
                 result[time] = []
             result[time].append([value, dataType])
+
+    return result
+
 

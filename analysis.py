@@ -1,13 +1,14 @@
 import math
 
 """
-The purpose of this function is to track extreme changes
-in slope and locate the minimas and maximas.
+The purpose of this function is to track calculate slopes and acceleration
+and locate the minimas and maximas.
 """
 def slopeMinimaMaxima(data):
     result = {}
     for dataType in data:
-        slopeChanges = []
+        slopes = []
+        acceleration = []
         localMin = []
         localMax = []
         absMin = absMax = None
@@ -20,7 +21,7 @@ def slopeMinimaMaxima(data):
             if prevPair:
                 prevTime, prevValue = prevPair
                 currSlope = (value-prevValue) / (time-prevTime).total_seconds()
-
+                slopes.append([time, currSlope])
                 #Assume start of data stream is localMin/Max
                 if len(localMin) == 0 and len(localMax) == 0:
                     if currSlope > 0:
@@ -41,12 +42,14 @@ def slopeMinimaMaxima(data):
                             localMax.append([time, value])
                             if absMax[1] < prevValue:
                                 absMax = prevPair
-                        slopeChanges.append([time, 0])
-                    else:
-                        if prevSlope < 0:
-                            slopeChanges.append([time, -1*helper(prevSlope, currSlope)])
-                        else:
-                            slopeChanges.append([time, helper(prevSlope, currSlope)])
+                    #Scale up acceleration by 100 for integer data
+                    acc = 100* (currSlope-prevSlope) / (time-prevTime).total_seconds()
+                    acceleration.append([time, acc])
+                        #if currSlope < 0:
+                            #acceleration.append([time, -1*helper(prevSlope, currSlope)])
+                        #else:
+                            #acceleration.append([time, helper(prevSlope, currSlope)])
+
                 #Update for next round of comparison
                 prevPair = time, value
                 prevSlope = currSlope
@@ -67,23 +70,143 @@ def slopeMinimaMaxima(data):
 
         result[dataType] = {'min': localMin, 'max': localMax,
                             'absMin': absMin, 'absMax': absMax,
-                            'slopes': slopeChanges}
+                            'slopes': slopes, 'acceleration': acceleration}
         
     return result
 
-"""Checks how much bigger num1 is of num2"""
+"""Checks how much bigger num2 is of num1"""
 def helper(num1, num2):
-    return abs(num1) / abs(num2)
+    return abs(num2) / abs(num1)
 
-"""Logs all significant changes in rate of bidding"""
-def logSlopeDetector(dataCenter, slopes):
-    for time, slope in slopes:
-        if slope > 0: sign = 'downward'
-        elif slope < 0: sign = 'upward  '
-        else: continue
-        value = int(math.log(abs(slope)))
-        if value >= 3:
-            print('Notice: Significant change for data center {} at {} times the rate {} at time: {}'.format(dataCenter, value, sign, time.strftime('%c')))
+"""FUNCTIONS FOR SINGLE DATA CENTER ACROSS TIME"""
+
+"""Logs all significant changes in rate of bidding
+Only notes increase in acceleration by factor of given value
+Ignores values <1 since that means slow down in bidding change"""
+def sigAccelerationDetector(dataCenter, acceleration):
+    for time, value in acceleration:
+        #Assume acceleration of 10 is significant threshold in bidding
+        if abs(int(value)) > 10:
+            print('Notice: Significant acceleration in bidding for data center {} by factor of {} at: {}'
+                  .format(dataCenter, int(value), time.strftime('%c')))
+
+"""FUNCTIONS FOR ACROSS TIME AND DATA CENTERS"""
+
+"""Logs all common bid changes with slope variable.
+Slope is rounded here for simplicity."""
+def checkCommonSlopesByTimeStamp(data):
+    result = {}
+    for dataType in data:
+        dataCenter = data[dataType]
+        for time, slope in dataCenter['slopes']:
+            if time not in result:
+                result[time] = []
+            result[time].append([int(slope), dataType])
+
+    for time, items in sorted(result.items()):
+        items.sort(key=lambda x: x[0])
+        commonSlope = 0
+        commonCenters = set()
+        for slope, dataType in items:
+            if len(commonCenters) == 0:
+                commonCenters.add(dataType)
+                commonSlope = slope  
+                continue
+            elif slope == commonSlope:
+                commonCenters.add(dataType)
+            else:
+                if len(commonCenters) > 1 and slope != 0:
+                    list(commonCenters).sort(key=lambda x: x)
+                    print("Data centers {} share common slope of {} at time {}"
+                          .format('-'.join(commonCenters), slope, time.strftime('%c')))
+                    commonCenters = set()
+                commonCenters.add(dataType)
+                commonSlope = slope
+
+        if len(commonCenters) > 1 and slope!= 0:
+            list(commonCenters).sort(key=lambda x: x)
+            print("Data centers {} share common slope of {} at time {}"
+                  .format('-'.join(commonCenters), slope, time.strftime('%c')))
+
+"""Same as common slope functin.
+Logs all common bid changes with acceleration variable.
+Acceleration is rounded here for simplicity."""
+def checkCommonAccelerationByTimeStamp(data):
+    result = {}
+    for dataType in data:
+        dataCenter = data[dataType]
+        for time, acc in dataCenter['acceleration']:
+            if time not in result:
+                result[time] = []
+            result[time].append([int(acc), dataType])
+
+    for time, items in sorted(result.items()):
+        items.sort(key=lambda x: x[0])
+        commonAcc = 0
+        commonCenters = set()
+        for acc, dataType in items:
+            if len(commonCenters) == 0:
+                commonCenters.add(dataType)
+                commonAcc = acc  
+                continue
+            elif acc == commonAcc:
+                commonCenters.add(dataType)
+            else:
+                if len(commonCenters) > 1 and acc != 0:
+                    list(commonCenters).sort(key=lambda x: x)
+                    print("Data centers {} share common acceleration of {} at time {}"
+                          .format('-'.join(commonCenters), acc, time.strftime('%c')))
+                    commonCenters = set()
+                commonCenters.add(dataType)
+                commonAcc = acc
+
+        if len(commonCenters) > 1 and acc != 0:
+            list(commonCenters).sort(key=lambda x: x)
+            print("Data centers {} share common acceleration of {} at time {}"
+                  .format('-'.join(commonCenters), acc, time.strftime('%c')))
+
+"""Same as common slope and acc functions
+Logs all common values by timestamp.
+Value is rounded here for simplicity."""
+def checkCommonValuesByTimeStamp(data):
+    result = {}
+    for dataType in data:
+        dataCenter = data[dataType]
+        for time, value in dataCenter:
+            if time not in result:
+                result[time] = []
+            result[time].append([int(value), dataType])
+
+    for time, items in sorted(result.items()):
+        items.sort(key=lambda x: x[0])
+        commonValue = 0
+        commonCenters = set()
+        for value, dateType in items:
+            if len(commonCenters) == 0:
+                commonCenters.add(dataType)
+                commonValue = value  
+                continue
+            elif value == commonValue:
+                commonCenters.add(dataType)
+            else:
+                if len(commonCenters) > 1 and value != 0:
+                    list(commonCenters).sort(key=lambda x: x)
+                    print("Data centers {} share common value of {} at time {}"
+                          .format('-'.join(commonCenters), value, time.strftime('%c')))
+                    commonCenters = set()
+                commonCenters.add(dataType)
+                commonValue = value
+
+        if len(commonCenters) > 1 and value!= 0:
+            list(commonCenters).sort(key=lambda x: x)
+            print("Data centers {} share common value of {} at time {}"
+                  .format('-'.join(commonCenters), value, time.strftime('%c')))
+  
+                
+            
+            
+
+
             
     
                 
