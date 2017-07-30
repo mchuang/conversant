@@ -76,28 +76,5 @@ def setAsideNegatives(data):
     
     return result
 
-def gatherNegatives(data):
-    result = {}
-    for dataType in data:
-        dataCenter = data[dataType]
-        for time, value in dataCenter:
-            if value < 0:
-                negatives.append([time, value, dataType])
-
-    result['negative'] = negatives
-    
-    return result
-
-"""Organizes data by timestamp rather than data center"""
-def organizeByTimeStamp(data):
-    result = {}
-    for dataType in data:
-        dataCenter = data[dataType]
-        for time, value in dataCenter:
-            if time not in result:
-                result[time] = []
-            result[time].append([value, dataType])
-
-    return result
 
 

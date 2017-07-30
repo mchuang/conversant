@@ -88,12 +88,12 @@ def linearRegressionStats(data, dataType):
     fig.autofmt_xdate()
 
     temp = []
-    for val in xPredict:
+    for val in xValues:
         temp.append([datetime.fromtimestamp(val[0])])
-    plt.plot_date(temp, yPredict, 'o')
+    plt.plot_date(temp, yValues, '-')
 
-    start = xPredict[0][0]
-    end = xPredict[-1][0]
+    start = xValues[0][0]
+    end = xValues[-1][0]
     f = lambda x: linearReg.intercept_ + x*linearReg.coef_
     plt.plot_date([[datetime.fromtimestamp(start)], [datetime.fromtimestamp(end)]],
                   f([start, end]), '-')
@@ -125,13 +125,13 @@ def linearRegressionStats2(xValues, yValues):
     fig.autofmt_xdate()
     
     temp = []
-    for val in xPredict:
+    for val in xValues:
         temp.append([datetime.fromtimestamp(val[0])])
-    plt.plot_date(temp, yPredict, 'o')
+    plt.plot_date(temp, yValues, '-')
     
     f = lambda x: linearReg.intercept_ + x*linearReg.coef_
-    start = xPredict[0][0]
-    end = xPredict[-1][0]
+    start = xValues[0][0]
+    end = xValues[-1][0]
     plt.plot_date([[datetime.fromtimestamp(start)], [datetime.fromtimestamp(end)]],
                   f([start, end]), '-')
     
