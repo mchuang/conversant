@@ -1,3 +1,5 @@
+
+
 Files of interest: statistics.py, conversant.py
 
 Setup:
@@ -6,6 +8,43 @@ Installation: I installed anaconda for the scipy stack. Will need to run code.
 How to run: Command prompt (I used anaconda prompt) and simply run 'python conversant.py data.Montoya.txt' or any data file as cmd line argument.
 Execution: Code should only display data I deem relevant to my findings and conclusions. A few graphs should be generated in working directory and console should display results of statistical tools.  
 Note: Code not optimized for large data
+
+Expected Output:
+LOG FOR DATA CENTER A
+ADF Statistic: -2.819861
+p-value: 0.055492
+Critical Values:
+        1%: -3.443
+        5%: -2.867
+        10%: -2.570
+LOG FOR DATA CENTER I
+ADF Statistic: -2.632819
+p-value: 0.086402
+Critical Values:
+        1%: -3.445
+        5%: -2.868
+        10%: -2.570
+LOG FOR DATA CENTER S
+ADF Statistic: -0.899667
+p-value: 0.788082
+Critical Values:
+        1%: -3.440
+        5%: -2.866
+        10%: -2.569
+LOG FOR DIFFERENCE BETWEEN S AND I
+Differences between S and I
+364 values with same timestamp
+ADF Statistic: -2.202254
+p-value: 0.205429
+Critical Values:
+        1%: -3.449
+        5%: -2.870
+        10%: -2.571
+Linear Regression Data
+Coefficients:
+ [-0.02991409]
+Mean squared error: 295505773.96
+Variance score: -19.65
 
 Findings:
 1. Since data file has time, value and some data center type, draw standard line plot to understand nature of data.
