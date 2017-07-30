@@ -13,9 +13,9 @@ Expected Output:
 LOG FOR DATA CENTER A
 Linear Regression for data center A
 Coefficients:
- [ 0.00759074]
-Mean squared error: 489480.21
-Variance score: -90.18
+ [ 0.00762573]
+Mean squared error: 470924.47
+Variance score: -0.28
 ADF Statistic: -2.819861
 p-value: 0.055492
 Critical Values:
@@ -25,9 +25,9 @@ Critical Values:
 LOG FOR DATA CENTER I
 Linear Regression for data center I
 Coefficients:
- [-0.03213332]
-Mean squared error: 597139921.52
-Variance score: -477.81
+ [-0.04971849]
+Mean squared error: 460899815.96
+Variance score: -7.72
 ADF Statistic: -2.632819
 p-value: 0.086402
 Critical Values:
@@ -37,9 +37,9 @@ Critical Values:
 LOG FOR DATA CENTER S
 Linear Regression for data center S
 Coefficients:
- [-0.01073902]
-Mean squared error: 81793141.86
-Variance score: -119.17
+ [-0.0159504]
+Mean squared error: 77980139.44
+Variance score: -91.83
 ADF Statistic: -0.899667
 p-value: 0.788082
 Critical Values:
@@ -57,9 +57,9 @@ Critical Values:
         10%: -2.571
 Linear Regression Data
 Coefficients:
- [-0.01260405]
-Mean squared error: 319632672.49
-Variance score: -232.34
+ [-0.02991409]
+Mean squared error: 295505773.96
+Variance score: -19.65
 
 Findings:
 1. Since data file has time, value and some data center type, draw standard line plot to understand nature of data.
@@ -73,6 +73,7 @@ simpleGraph.png - Since data file has time, value, and some data center type, fi
 noNegatives.png - First graph is unreadable with the heavy negative skew values. A quick google search suggeests rtb = real time bids so values might be money. Remove negative values and plotted another graph.
 simplify.png - Added vertical lines to represent instances where negatives values were recorded. In addition, both these data centers have 2 massive drops in value at approximately the same time while the 3rd data center has periodic trend except for one instance of time.
 differenceLinearRegression.png - Plotted the difference values of S and I, giving a similar trend of the original data center I line plot.
+[dataType]LinearRegression - Displays graph of trained linear regression model compared with validation values.
 
 Challenges:
 1. How to write code to analyze graphs without human eyes? Use math modules? Statistics? Machine learning? 

@@ -20,6 +20,7 @@ from statsmodels.tsa.stattools import adfuller
 import numpy as np
 
 """Simple read of datafile and returns data in DataFrame"""
+"""Does not add in negatives values"""
 def createDataSet(filename):
     f = open(filename, 'r')
     data = []
@@ -29,7 +30,7 @@ def createDataSet(filename):
             #For simplicity, just pretend Data center = Data
             columns = row[:4]
         elif row[0] == 'rtb.requests':
-            if float(row[2]) <= 0:
+            if float(row[2]) < 0:
                 continue
             dataType = row[3][-1]
             data.append([row[0], int(row[1]), float(row[2]), dataType])
