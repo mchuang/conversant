@@ -11,6 +11,11 @@ Note: Code not optimized for large data
 
 Expected Output:
 LOG FOR DATA CENTER A
+Linear Regression for data center A
+Coefficients:
+ [ 0.00759074]
+Mean squared error: 489480.21
+Variance score: -90.18
 ADF Statistic: -2.819861
 p-value: 0.055492
 Critical Values:
@@ -18,6 +23,11 @@ Critical Values:
         5%: -2.867
         10%: -2.570
 LOG FOR DATA CENTER I
+Linear Regression for data center I
+Coefficients:
+ [-0.03213332]
+Mean squared error: 597139921.52
+Variance score: -477.81
 ADF Statistic: -2.632819
 p-value: 0.086402
 Critical Values:
@@ -25,13 +35,18 @@ Critical Values:
         5%: -2.868
         10%: -2.570
 LOG FOR DATA CENTER S
+Linear Regression for data center S
+Coefficients:
+ [-0.01073902]
+Mean squared error: 81793141.86
+Variance score: -119.17
 ADF Statistic: -0.899667
 p-value: 0.788082
 Critical Values:
         1%: -3.440
         5%: -2.866
         10%: -2.569
-LOG FOR DIFFERENCE BETWEEN S AND I
+LOG FOR DIFFERENCE OF TWO CENTERS
 Differences between S and I
 364 values with same timestamp
 ADF Statistic: -2.202254
@@ -42,9 +57,9 @@ Critical Values:
         10%: -2.571
 Linear Regression Data
 Coefficients:
- [-0.02991409]
-Mean squared error: 295505773.96
-Variance score: -19.65
+ [-0.01260405]
+Mean squared error: 319632672.49
+Variance score: -232.34
 
 Findings:
 1. Since data file has time, value and some data center type, draw standard line plot to understand nature of data.
@@ -57,7 +72,7 @@ Graphs:
 simpleGraph.png - Since data file has time, value, and some data center type, first idea is to draw a standard line plot to better understand the nature of the data.
 noNegatives.png - First graph is unreadable with the heavy negative skew values. A quick google search suggeests rtb = real time bids so values might be money. Remove negative values and plotted another graph.
 simplify.png - Added vertical lines to represent instances where negatives values were recorded. In addition, both these data centers have 2 massive drops in value at approximately the same time while the 3rd data center has periodic trend except for one instance of time.
-difference.png - Plotted the difference values of S and I, giving a similar trend of the original data center I line plot.
+differenceLinearRegression.png - Plotted the difference values of S and I, giving a similar trend of the original data center I line plot.
 
 Challenges:
 1. How to write code to analyze graphs without human eyes? Use math modules? Statistics? Machine learning? 
@@ -66,5 +81,5 @@ Challenges:
 
 Theories:
 1. ADFuller test on differences of data center S and I would yield a statistically significant stationary time series model. Proven false by the p-value. 
-2. Linear regression test on the difference of S and I values would behave close to a linear function. Proven false by large mean square error. This rather strengthens idea that S may be stationary time series. 
+2. Linear regression test on the difference of S and I values would behave close to a linear function. Proven false by large mean square error. This rather strengthens idea that S may be stationary time series. See differenceLinearGraph.png for visual.
 

@@ -19,6 +19,7 @@ from pandas import Series
 from statsmodels.tsa.stattools import adfuller
 import numpy as np
 
+"""Simple read of datafile and returns data in DataFrame"""
 def createDataSet(filename):
     f = open(filename, 'r')
     data = []
@@ -36,14 +37,16 @@ def createDataSet(filename):
             continue
     return pandas.DataFrame(columns=columns, data=data)
 
+"""Runs the relevant statistic calculations"""
+"""Only decided to run adfuller and a linear regression test"""
 def basicStats(data):
-
     #linearRegressionStats(data, 'A')
     for key in data.groupby('Data').groups.keys():
-        #linearRegressionStats(data, groupsByType, key)
+        print('LOG FOR DATA CENTER %s' % key)
+        linearRegressionStats(data, key)
         adfullerStats(data, key)
 
-    print('LOG FOR DIFFERENCE BETWEEN S AND I')
+    print('LOG FOR DIFFERENCE OF TWO CENTERS')
     diff = adfullerDiffOfTwoTypes(data, 'S', 'I')
     xValues = []
     yValues = []
@@ -63,12 +66,13 @@ def linearRegressionStats(data, dataType):
         yValues.append(int(data.get_value(index, 'Value')))
     
     linearReg = LinearRegression()
-    xTrain = xValues[:-20]
-    xPredict = xValues[-20:]
-    yTrain = yValues[:-20]
-    yPredict = yValues[-20:]
+    xTrain = xValues[:-10]
+    xPredict = xValues[-10:]
+    yTrain = yValues[:-10]
+    yPredict = yValues[-10:]
     linearReg.fit(xTrain, yTrain)
 
+    print('Linear Regression for data center %s' % dataType)
     print('Coefficients: \n', linearReg.coef_)
     # The mean squared error
     print("Mean squared error: %.2f"
@@ -77,22 +81,33 @@ def linearRegressionStats(data, dataType):
     print('Variance score: %.2f' % linearReg.score(xPredict, yPredict))
 
     # Plot outputs
-    plt.scatter(xPredict, yPredict,  color='black')
-    plt.plot(xPredict, linearReg.predict(xPredict), color='blue', linewidth=3)
+    plt.xlabel('Time')
+    plt.ylabel('Value')
+    temp = []
+    for val in xValues:
+        temp.append([datetime.fromtimestamp(val[0])])
+    plt.plot_date(temp, yValues, 'o')
+
+    start = xValues[0][0]
+    end = xValues[-1][0]
+    f = lambda x: linearReg.intercept_ + x*linearReg.coef_
+    plt.plot_date([[datetime.fromtimestamp(start)], [datetime.fromtimestamp(end)]],
+                  f([start, end]), '-')
 
     plt.xticks(())
     plt.yticks(())
 
-    plt.show()
+    plt.savefig(dataType+'LinearRegression.png')
+    plt.close()
 
-"""Same as above but directly insert own values
-Assume 20 values for prediction, remainder are for training"""
+"""Same as above but directly insert own values"""
+"""Assume 10 values for prediction, remainder are for training"""
 def linearRegressionStats2(xValues, yValues):
     linearReg = LinearRegression()
-    xTrain = xValues[:-20]
-    xPredict = xValues[-20:]
-    yTrain = yValues[:-20]
-    yPredict = yValues[-20:]
+    xTrain = xValues[:-10]
+    xPredict = xValues[-10:]
+    yTrain = yValues[:-10]
+    yPredict = yValues[-10:]
     linearReg.fit(xTrain, yTrain)
 
     print('Linear Regression Data')
@@ -109,11 +124,14 @@ def linearRegressionStats2(xValues, yValues):
     for val in xValues:
         temp.append([datetime.fromtimestamp(val[0])])
     plt.plot_date(temp, yValues, 'o')
-    f = lambda x: linearReg.intercept_ + x*linearReg.coef_
     
-    plt.plot_date([[datetime.fromtimestamp(xValues[0][0])], [datetime.fromtimestamp(xValues[-1][0])]]
-        ,f([xValues[0][0], xValues[-1][0]]), '-')
-    plt.savefig('difference.png')
+    f = lambda x: linearReg.intercept_ + x*linearReg.coef_
+    start = xValues[0][0]
+    end = xValues[-1][0]
+    plt.plot_date([[datetime.fromtimestamp(start)], [datetime.fromtimestamp(end)]],
+                  f([start, end]), '-')
+    
+    plt.savefig('differenceLinearRegression.png')
     plt.close()
 
 """Function is to accept or reject hypothesis if time series is stationary
@@ -132,7 +150,6 @@ def adfullerStats(data, dataType):
         #values.append(int(data.get_value(index, 'Value')))
 
     result = adfuller(Series(pair))
-    print('LOG FOR DATA CENTER %s' % dataType)
     print('ADF Statistic: %f' % result[0])
     print('p-value: %f' % result[1])
     print('Critical Values:')
@@ -156,6 +173,7 @@ def adfullerStatsPartitioned(data, dataType, partition):
         print('Partition %d' % i)
         print('p-value: %f' % result[1])
 
+"""Applies adfuller on the difference of values between two data centers"""
 def adfullerDiffOfTwoTypes(data, typeA, typeB):
     groupsByTime = data.groupby('Time')
 
@@ -174,9 +192,9 @@ def adfullerDiffOfTwoTypes(data, typeA, typeB):
     for time in dataAB:
         if len(dataAB[time]) == 2:
             #Sort by data type to stay consistent
-            AB = dataAB[time]
-            AB.sort(key=lambda x: x[1])
-            diff = AB[0][0] - AB[1][0]
+            temp = dataAB[time]
+            temp.sort(key=lambda x: x[1])
+            diff = temp[0][0] - temp[1][0]
             differences[time] = diff
         
 
@@ -191,7 +209,7 @@ def adfullerDiffOfTwoTypes(data, typeA, typeB):
 
     return differences
             
-"""Random testing"""
+"""Random models testing"""
 def otherPotentialModels(data):
     groupsByType = data.groupby('Data')
     groupsByTime = data.groupby('Time')
