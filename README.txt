@@ -23,3 +23,7 @@ Challenges:
 2. How to detect periodic trends for one of the data centers? 
 3. How to show relationship between two line plots? Even with the common timestamps, ADFuller test on the differences might only work for a constant offset. What if one plot is multiplied or shifted?
 
+Theories:
+1. ADFuller test on differences of data center S and I would yield a statistically significant stationary time series model. Proven false by the p-value. 
+2. Linear regression test on the difference of S and I values would behave close to a linear function. Proven false by large mean square error. 
+
