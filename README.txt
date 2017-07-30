@@ -84,3 +84,7 @@ Theories:
 1. ADFuller test on differences of data center S and I would yield a statistically significant stationary time series model. Proven false by the p-value. 
 2. Linear regression test on the difference of S and I values would behave close to a linear function. Proven false by large mean square error. This rather strengthens idea that S may be stationary time series. See differenceLinearGraph.png for visual.
 
+Credits:
+http://machinelearningmastery.com/machine-learning-in-python-step-by-step/
+http://machinelearningmastery.com/time-series-data-stationary-python/
+https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test
