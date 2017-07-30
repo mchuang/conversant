@@ -66,10 +66,10 @@ def linearRegressionStats(data, dataType):
         yValues.append(int(data.get_value(index, 'Value')))
     
     linearReg = LinearRegression()
-    xTrain = xValues[:-10]
-    xPredict = xValues[-10:]
-    yTrain = yValues[:-10]
-    yPredict = yValues[-10:]
+    xTrain = xValues[:-20]
+    xPredict = xValues[-20:]
+    yTrain = yValues[:-20]
+    yPredict = yValues[-20:]
     linearReg.fit(xTrain, yTrain)
 
     print('Linear Regression for data center %s' % dataType)
@@ -83,31 +83,31 @@ def linearRegressionStats(data, dataType):
     # Plot outputs
     plt.xlabel('Time')
     plt.ylabel('Value')
-    temp = []
-    for val in xValues:
-        temp.append([datetime.fromtimestamp(val[0])])
-    plt.plot_date(temp, yValues, 'o')
+    fig, ax = plt.subplots()
+    fig.autofmt_xdate()
 
-    start = xValues[0][0]
-    end = xValues[-1][0]
+    temp = []
+    for val in xPredict:
+        temp.append([datetime.fromtimestamp(val[0])])
+    plt.plot_date(temp, yPredict, 'o')
+
+    start = xPredict[0][0]
+    end = xPredict[-1][0]
     f = lambda x: linearReg.intercept_ + x*linearReg.coef_
     plt.plot_date([[datetime.fromtimestamp(start)], [datetime.fromtimestamp(end)]],
                   f([start, end]), '-')
 
-    plt.xticks(())
-    plt.yticks(())
-
-    plt.savefig(dataType+'LinearRegression.png')
+    fig.savefig(dataType+'LinearRegression.png')
     plt.close()
 
 """Same as above but directly insert own values"""
-"""Assume 10 values for prediction, remainder are for training"""
+"""Assume 20 values for prediction, remainder are for training"""
 def linearRegressionStats2(xValues, yValues):
     linearReg = LinearRegression()
-    xTrain = xValues[:-10]
-    xPredict = xValues[-10:]
-    yTrain = yValues[:-10]
-    yPredict = yValues[-10:]
+    xTrain = xValues[:-20]
+    xPredict = xValues[-20:]
+    yTrain = yValues[:-20]
+    yPredict = yValues[-20:]
     linearReg.fit(xTrain, yTrain)
 
     print('Linear Regression Data')
@@ -120,18 +120,21 @@ def linearRegressionStats2(xValues, yValues):
 
     plt.xlabel('Time')
     plt.ylabel('Value')
+    fig, ax = plt.subplots()
+    fig.autofmt_xdate()
+    
     temp = []
-    for val in xValues:
+    for val in xPredict:
         temp.append([datetime.fromtimestamp(val[0])])
-    plt.plot_date(temp, yValues, 'o')
+    plt.plot_date(temp, yPredict, 'o')
     
     f = lambda x: linearReg.intercept_ + x*linearReg.coef_
-    start = xValues[0][0]
-    end = xValues[-1][0]
+    start = xPredict[0][0]
+    end = xPredict[-1][0]
     plt.plot_date([[datetime.fromtimestamp(start)], [datetime.fromtimestamp(end)]],
                   f([start, end]), '-')
     
-    plt.savefig('differenceLinearRegression.png')
+    fig.savefig('differenceLinearRegression.png')
     plt.close()
 
 """Function is to accept or reject hypothesis if time series is stationary
