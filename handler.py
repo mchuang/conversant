@@ -32,7 +32,7 @@ def handleData(data):
             xValues.append(time)
             yValues.append(value)
     
-        data[dataType] = [xValues, yValues]
+        result[dataType] = [xValues, yValues]
     return result
 
 """Assume rtb = real time bids so value is money so it cannot be negative.

@@ -10,6 +10,8 @@ def drawSimpleGraph(data, graphName):
     fig, ax = plt.subplots()
     #ax.fmt_xdata = mdates.DateFormatter('%m-%d %H:00')
     fig.autofmt_xdate()
+
+    lbls = []
     for dataType in data:
         xValues, yValues = data[dataType]
             
@@ -21,8 +23,10 @@ def drawSimpleGraph(data, graphName):
             assignedColors[dataType] = color
 
         xValues = mdates.date2num(xValues)
-        plt.plot_date(xValues, yValues, color)
-
+        lbl, = plt.plot_date(xValues, yValues, color, label=dataType)
+        lbls.append(lbl)
+        
+    plt.legend(handles=lbls)
     plt.savefig(graphName)
 
 def drawFinalGraph(data, graphName):
@@ -36,6 +40,7 @@ def drawFinalGraph(data, graphName):
     #ax.fmt_xdata = mdates.DateFormatter('%m-%d %H:00')
     fig.autofmt_xdate()
 
+    lbls = []
     negatives = None
     for dataType in data:
         if dataType == 'negative':
@@ -52,8 +57,10 @@ def drawFinalGraph(data, graphName):
             assignedColors[dataType] = color
 
         xValues = mdates.date2num(xValues)
-        plt.plot_date(xValues, yValues, color)
+        lbl, = plt.plot_date(xValues, yValues, color, label=dataType)
+        lbls.append(lbl)
 
+    plt.legend(handles=lbls)
     if negatives:
         for xValue, yValue, dataType in negatives:
             color = assignedColors[dataType]

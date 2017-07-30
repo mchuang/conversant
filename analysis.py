@@ -8,6 +8,7 @@ def slopeMinimaMaxima(data):
     result = {}
     for dataType in data:
         slopes = []
+        slopesByUnitRequest = []
         acceleration = []
         localMin = []
         localMax = []
@@ -22,6 +23,7 @@ def slopeMinimaMaxima(data):
                 prevTime, prevValue = prevPair
                 currSlope = (value-prevValue) / (time-prevTime).total_seconds()
                 slopes.append([time, currSlope])
+                slopesByUnitRequest.append([time, value-prevValue])
                 #Assume start of data stream is localMin/Max
                 if len(localMin) == 0 and len(localMax) == 0:
                     if currSlope > 0:
@@ -42,8 +44,8 @@ def slopeMinimaMaxima(data):
                             localMax.append([time, value])
                             if absMax[1] < prevValue:
                                 absMax = prevPair
-                    #Scale up acceleration by 100 for integer data
-                    acc = 100* (currSlope-prevSlope) / (time-prevTime).total_seconds()
+                    #Scale up acceleration by 10 for integer data
+                    acc = 10* (currSlope-prevSlope) / (time-prevTime).total_seconds()
                     acceleration.append([time, acc])
                         #if currSlope < 0:
                             #acceleration.append([time, -1*helper(prevSlope, currSlope)])
@@ -70,7 +72,8 @@ def slopeMinimaMaxima(data):
 
         result[dataType] = {'min': localMin, 'max': localMax,
                             'absMin': absMin, 'absMax': absMax,
-                            'slopes': slopes, 'acceleration': acceleration}
+                            'slopes': slopes, 'acceleration': acceleration,
+                            'slopesByUnitRequest': slopesByUnitRequest}
         
     return result
 
@@ -80,13 +83,22 @@ def helper(num1, num2):
 
 """FUNCTIONS FOR SINGLE DATA CENTER ACROSS TIME"""
 
-"""Logs all significant changes in rate of bidding
+"""Logs all significant values of slope of bidding
+Only notes increase in slope by factor of given value"""
+def sigSlopeDetector(dataCenter, slopes, threshold):
+    for time, value in slopes:
+        #Assume slope of 100 is significant threshold in bidding
+        if abs(int(value)) > threshold:
+            print('Notice: Significant slope in bidding for data center {} by factor of {} at: {}'
+                  .format(dataCenter, int(value), time.strftime('%c')))
+
+"""Logs all significant values of acceleration of bidding
 Only notes increase in acceleration by factor of given value
 Ignores values <1 since that means slow down in bidding change"""
-def sigAccelerationDetector(dataCenter, acceleration):
+def sigAccelerationDetector(dataCenter, acceleration, threshold):
     for time, value in acceleration:
         #Assume acceleration of 10 is significant threshold in bidding
-        if abs(int(value)) > 10:
+        if abs(int(value)) > threshold:
             print('Notice: Significant acceleration in bidding for data center {} by factor of {} at: {}'
                   .format(dataCenter, int(value), time.strftime('%c')))
 
