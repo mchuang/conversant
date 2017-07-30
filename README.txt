@@ -12,11 +12,13 @@ Findings:
 2. Negative values might be insignificant. Simple google search suggests rtb-requests are real time bids and values are money values and therefore should not be negative. Negative values also mostly come from single data center. Reasons these exist could be sign overflow, corrupted network, or potential exploit? 
 3. After reading and using augmented dickey fuller test, results suggest that Data center A does not have unit root and is a stationary time series of significance level around 5.5% (meaning around 5.5% chance that it is statistical fluke).Notable results show for data center I but at significance level of 8.6% while data center S is clearly not stationary with p-value at 0.788
 4. Applied adfuller test again on the difference of data centers S and I. Theoretically, if one is simply offset by the other, the difference of the two should yield a stationary time series. Results showed that it may not be necessarily true with p-value of 0.205, even though there is a pattern to human eye. Linear regression test on set of difference values yielded no conclusion either.
+5. Plotting the difference yielded a similar plot to the two originals (S and I). This coincides the fact that data center S is relatively close to stationary time series as shown by ADFuller test.
+
 Graphs:
 simpleGraph.png - Since data file has time, value, and some data center type, first idea is to draw a standard line plot to better understand the nature of the data.
 noNegatives.png - First graph is unreadable with the heavy negative skew values. A quick google search suggeests rtb = real time bids so values might be money. Remove negative values and plotted another graph.
 simplify.png - Added vertical lines to represent instances where negatives values were recorded. In addition, both these data centers have 2 massive drops in value at approximately the same time while the 3rd data center has periodic trend except for one instance of time.
-
+difference.png - Plotted the difference values of S and I, giving a similar trend of the original data center I line plot.
 
 Challenges:
 1. How to write code to analyze graphs without human eyes? Use math modules? Statistics? Machine learning? 
@@ -25,5 +27,5 @@ Challenges:
 
 Theories:
 1. ADFuller test on differences of data center S and I would yield a statistically significant stationary time series model. Proven false by the p-value. 
-2. Linear regression test on the difference of S and I values would behave close to a linear function. Proven false by large mean square error. 
+2. Linear regression test on the difference of S and I values would behave close to a linear function. Proven false by large mean square error. This rather strengthens idea that S may be stationary time series. 
 

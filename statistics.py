@@ -102,6 +102,18 @@ def linearRegressionStats2(xValues, yValues):
     # Explained variance score: 1 is perfect prediction
     print('Variance score: %.2f' % linearReg.score(xPredict, yPredict))
 
+    plt.xlabel('Time')
+    plt.ylabel('Value')
+    temp = []
+    for val in xValues:
+        temp.append([datetime.fromtimestamp(val[0])])
+    plt.plot_date(temp, yValues, 'o')
+    f = lambda x: linearReg.intercept_ + x*linearReg.coef_
+    
+    plt.plot_date([[datetime.fromtimestamp(xValues[0][0])], [datetime.fromtimestamp(xValues[-1][0])]]
+        ,f([xValues[0][0], xValues[-1][0]]), '-')
+    plt.savefig('difference.png')
+    plt.close()
 
 """Function is to accept or reject hypothesis if time series is stationary
 Solution towards detecting for periodic trends and if data has unit root

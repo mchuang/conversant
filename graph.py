@@ -28,6 +28,7 @@ def drawSimpleGraph(data, graphName):
         
     plt.legend(handles=lbls)
     plt.savefig(graphName)
+    plt.close()
 
 def drawFinalGraph(data, graphName):
     lineColors = ['k', 'y', 'm', 'c', 'r', 'g', 'b']
@@ -68,6 +69,7 @@ def drawFinalGraph(data, graphName):
 
     fig = plt.gcf()
     fig.set_size_inches(30, 10)
-    fig.savefig(graphName, dpi=200)    
+    fig.savefig(graphName, dpi=200)
+    plt.close()
     #plt.savefig(graphName)
     
