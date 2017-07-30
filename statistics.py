@@ -42,14 +42,14 @@ def basicStats(data):
     for key in data.groupby('Data').groups.keys():
         #linearRegressionStats(data, groupsByType, key)
         adfullerStats(data, key)
-    diff = adfullerDiffOfTwoTypes(data, 'S', 'I')
 
+    print('LOG FOR DIFFERENCE BETWEEN S AND I')
+    diff = adfullerDiffOfTwoTypes(data, 'S', 'I')
     xValues = []
     yValues = []
     for key in diff.keys():
         xValues.append([key])
         yValues.append(diff[key])
-
     linearRegressionStats2(xValues, yValues)
 
 """Standard linear regression model with train and predict"""
@@ -95,6 +95,7 @@ def linearRegressionStats2(xValues, yValues):
     yPredict = yValues[-20:]
     linearReg.fit(xTrain, yTrain)
 
+    print('Linear Regression Data')
     print('Coefficients: \n', linearReg.coef_)
     # The mean squared error
     print("Mean squared error: %.2f"
