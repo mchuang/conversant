@@ -46,6 +46,7 @@ Critical Values:
         1%: -3.440
         5%: -2.866
         10%: -2.569
+
 LOG FOR DIFFERENCE OF TWO CENTERS
 Differences between S and I
 364 values with same timestamp
@@ -83,6 +84,9 @@ Challenges:
 Theories:
 1. ADFuller test on differences of data center S and I would yield a statistically significant stationary time series model. Proven false by the p-value. 
 2. Linear regression test on the difference of S and I values would behave close to a linear function. Proven false by large mean square error. This rather strengthens idea that S may be stationary time series. See differenceLinearGraph.png for visual.
+
+Other Approaches:
+Applied basic math and wrote functionality to locate minimums, maximums, slopes, and accelerations. Then added in functions to detect which datacenters share similar derived values at same timestamps.
 
 Credits:
 http://machinelearningmastery.com/machine-learning-in-python-step-by-step/
